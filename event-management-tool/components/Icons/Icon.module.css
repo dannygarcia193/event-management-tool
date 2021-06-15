@@ -1,0 +1,13 @@
+.Icon{
+    font-size: 1.25rem;
+    color:white;
+    display: inline-flex;
+    border: 1px solid transparent;
+    padding: 1.25rem;
+}
+.Icon:hover {
+        border: 1px solid var(--info) !important;
+        background-color: var(--info);
+        transition: .2s;
+        opacity: .9;
+    }

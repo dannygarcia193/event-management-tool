@@ -1,0 +1,13 @@
+.ErrorContainer{
+    display: flex;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-top: 1rem;
+    width: 75%;
+    margin: auto;
+}
+
+.ErrorMessage{
+    color: var(--danger);
+    margin:0;
+}

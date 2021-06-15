@@ -1,0 +1,11 @@
+.Togglers{
+    display: inline-flex;
+    flex-wrap: wrap; 
+    align-items:center;
+    margin-bottom: 1rem;
+}
+@media screen and (min-width: 576px){
+   .Togglers{
+        width: 100%;
+   }
+}

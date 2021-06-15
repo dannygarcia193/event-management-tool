@@ -1,0 +1,63 @@
+.PaginationExtra{
+    padding-left: .25rem;
+    display: inline-flex;
+    align-items: center;
+}
+.PageInput{
+    width: 100px;
+}
+.Table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    vertical-align: top;
+    border-color: #dee2e6;
+}
+.Table > tbody {
+    vertical-align: inherit;
+}
+.Table > tbody > tr:hover{
+    background-color:  rgba(0, 0, 0, 0.075);
+    color:  #212529;
+}
+.Table > thead {
+    vertical-align: bottom;
+}
+.Table > :not(caption) > * > * {
+    padding: 0.5rem 0.5rem;
+    background-color: transparent;
+    border-bottom-width: 1px;
+    box-shadow: inset 0 0 0 9999px transparent;
+  }
+.TableResponsive {
+    margin-top: .5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+.Pagination{
+    display: flex;
+    overflow-x: auto;
+    flex-wrap:wrap;
+}
+.PageJumpControl{
+    margin-left:auto;
+}
+
+@media  screen and (max-width:576px) {
+    .PageJumpControl{
+        width:100%;
+        display:flex;
+        margin-top:1rem;
+    }
+    .PageJumpInput{
+        margin-right: auto;
+    }
+    .PageControls{
+    width:100%;
+    min-width: 100%;
+    display:flex;
+    }
+    .PaginationExtra{
+        margin-left:auto;
+    }
+}

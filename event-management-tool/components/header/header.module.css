@@ -1,0 +1,8 @@
+.Header{
+    align-items:center;
+}
+
+.HeadingContainer{
+    display:flex;
+    justify-content: flex-end;
+}

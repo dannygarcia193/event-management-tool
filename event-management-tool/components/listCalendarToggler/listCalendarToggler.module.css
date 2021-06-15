@@ -1,0 +1,7 @@
+.Toggler{
+    display: inline-flex;
+    align-content: center;
+    flex-wrap: wrap; 
+    margin-left: auto;
+    border: 1px solid #dee2e6 !important;
+}

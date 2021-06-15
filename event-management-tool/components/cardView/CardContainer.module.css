@@ -1,0 +1,91 @@
+.MainDateContainer{
+    display:flex;
+    align-items: center;
+    color:white;
+    max-width: 30%;
+    width:30%;
+    background-color: #A30000;
+    border-radius: 0.625rem;
+}
+
+.ClockContainer{
+    text-align: right;
+    max-width: 30%;
+    min-width: 30%;
+    margin-right:.25rem;
+}
+
+.DateContainer{
+    padding-left: .5rem;
+    max-width: 70%;
+    min-width:70%;
+}
+
+.InfoContainer{
+    display:flex;
+    align-items: center;
+    flex-wrap: wrap;
+    color:var(--black);
+    padding-left: 1.25rem;
+    padding-right: 1rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    max-width: 70%;
+    width:70%;
+    border-radius: 0.625rem;
+}
+
+.SubInfoContainer{
+    display:flex;
+    align-items:center;
+    min-width:100%;
+    width:100%;
+}
+
+.Icon{
+    max-width: 10%;
+    min-width:10%;
+}
+
+.Info{
+    max-width: 90%;
+    min-width:90%;
+}
+
+.Card{
+    display:inline-flex;
+    word-wrap: break-word !important;
+    word-break: break-word !important;
+    padding-left: 0;
+    padding-right:0;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
+    box-shadow: 0px 5px 5px 2px rgba(0, 0, 0, 0.25);
+    border-radius: 0.625rem;
+
+}
+
+.MainCardContainer{
+    justify-content: center;
+}
+.CardContainer{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content: center;
+    width:100%;
+    min-width:100%;
+}
+
+.Offset {
+    margin-left: 8.3333333333%;
+  }
+
+i.bi-clock-fill{
+    font-size:25rem;
+}
+
+.PaginationExtra{
+    padding-left: .25rem;
+    display: inline-flex;
+    align-items: center;
+}
