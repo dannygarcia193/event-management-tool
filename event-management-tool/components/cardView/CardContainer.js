@@ -41,7 +41,7 @@ const InfoContainer = ({ event }) => {
 const Card = ({ event, offset }) => {
   const offsetBy = offset ? styles.Offset : "";
   return (
-    <div className={"col-5 " + styles.Card + " " + offsetBy}>
+    <div className={styles.Card + " " + offsetBy}>
       <DateContainer event={event} />
       <InfoContainer event={event} />
     </div>
