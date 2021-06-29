@@ -12,10 +12,15 @@
   clip: rect(0, 0, 0, 0);
   pointer-events: none;
 }
+.BtnLink {
+  border: 1px solid #d0d0d07d;
+  border-radius: 0;
+}
 .BtnLink:hover {
   background-color: var(--primary);
   color: var(--white);
 }
 .BtnPrimary {
   cursor: initial;
+  border-radius: 0;
 }
