@@ -1,7 +1,14 @@
-.Toggler{
-    display: inline-flex;
-    align-content: center;
-    flex-wrap: wrap; 
-    margin-left: auto;
-    border: 1px solid #dee2e6 !important;
+.Toggler {
+  display: inline-flex;
+  align-content: center;
+  flex-wrap: wrap;
+  margin-left: auto;
+  border: 1px solid #dee2e6 !important;
+}
+.BtnLink:hover {
+  background-color: var(--primary);
+  color: var(--white);
+}
+.BtnInfo {
+  cursor: initial;
 }

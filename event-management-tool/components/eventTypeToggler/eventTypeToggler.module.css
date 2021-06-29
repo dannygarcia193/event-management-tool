@@ -1,14 +1,21 @@
-.BtnGroup{
-    position: relative;
-    display: inline-flex;
-    vertical-align: middle;
-    align-content: center;
-    flex-wrap: wrap;
-    margin-bottom:1.25rem;
-    margin-top:1.25rem;
+.BtnGroup {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  align-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 1.25rem;
+  margin-top: 1.25rem;
 }
-.RadioButton{
-    position: absolute;
-    clip: rect(0, 0, 0, 0);
-    pointer-events: none;
+.RadioButton {
+  position: absolute;
+  clip: rect(0, 0, 0, 0);
+  pointer-events: none;
+}
+.BtnLink:hover {
+  background-color: var(--primary);
+  color: var(--white);
+}
+.BtnPrimary {
+  cursor: initial;
 }
