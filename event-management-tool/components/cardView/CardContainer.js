@@ -1,6 +1,16 @@
 import { clockIcon, mapMarkerIcon, chartIcon } from "../Icons/IconList";
 import React from "react";
 import styles from "./CardContainer.module.css";
+function useIsMounted() {
+  const isMounted = React.useRef(false);
+
+  React.useEffect(() => {
+    isMounted.current = true;
+    return () => (isMounted.current = false);
+  }, []);
+
+  return isMounted;
+}
 
 const DateContainer = ({ event }) => {
   return (
@@ -15,22 +25,27 @@ const DateContainer = ({ event }) => {
 };
 
 const InfoContainer = ({ event }) => {
+  const isMounted = useIsMounted();
   const [n, setN] = React.useState([
     "# Expected Attendees",
     "# Confirmed Attendees",
   ]);
   const url = `http://localhost:3001/attendee?event_id=${event.id}`;
+  React.useEffect(() => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => {
+        if (isMounted.current) {
+          setN([
+            `Expected: ${data.length}`,
+            `Confirmed: ${
+              data.filter((val) => val.status === "registered").length
+            }`,
+          ]);
+        }
+      });
+  });
 
-  fetch(url)
-    .then((response) => response.json())
-    .then((data) => {
-      setN([
-        `Expected: ${data.length}`,
-        `Confirmed: ${
-          data.filter((val) => val.status === "registered").length
-        }`,
-      ]);
-    });
   return (
     <div className={styles.InfoContainer}>
       <h3 className="m-0">{event.name}</h3>
