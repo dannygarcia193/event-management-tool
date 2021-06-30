@@ -5,9 +5,9 @@ import Error from "../error/Error";
 
 const getData = (row) => {
   return {
-    start: format(new Date(row.start), "Pp"),
-    speaker: row.speaker,
     title: row.title,
+    speaker: row.speaker,
+    start: format(new Date(row.start), "Pp"),
     status: row.status,
     city: row.city,
     state: row.state,

@@ -9,7 +9,7 @@ const getData = (row) => {
     date: format(new Date(row.start), "MMM d"),
     time: format(new Date(row.start), "p"),
     name: row.title,
-    address: row.address,
+    address: row.street,
     city: row.city,
     state: row.state,
     zip_code: row.zip_code,
