@@ -5,6 +5,7 @@ import Error from "../error/Error";
 
 const getData = (row) => {
   return {
+    event_id: row.id,
     title: row.title,
     speaker: row.speaker,
     start: format(new Date(row.start), "Pp"),

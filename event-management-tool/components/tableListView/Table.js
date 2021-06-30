@@ -34,9 +34,19 @@ const TBody = ({
               return (
                 <td {...cell.getCellProps()}>
                   {cell.column.Header === "Status" ? (
-                    <span>{cell.render("Cell")}</span>
+                    <span
+                      className={
+                        cell.row.values.status === "past"
+                          ? styles.Tag + " " + styles.Past
+                          : styles.Tag + " " + styles.Upcoming
+                      }
+                    >
+                      {cell.render("Cell")}
+                    </span>
                   ) : cell.column.Header === "Name" ? (
-                    <a href="/">{cell.render("Cell")}</a>
+                    <a href={"/" + cell.row.original.event_id}>
+                      {cell.render("Cell")}
+                    </a>
                   ) : (
                     <span>{cell.render("Cell")}</span>
                   )}
