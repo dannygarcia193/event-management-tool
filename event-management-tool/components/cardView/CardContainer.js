@@ -15,6 +15,22 @@ const DateContainer = ({ event }) => {
 };
 
 const InfoContainer = ({ event }) => {
+  const [n, setN] = React.useState([
+    "# Expected Attendees",
+    "# Confirmed Attendees",
+  ]);
+  const url = `http://localhost:3001/attendee?event_id=${event.id}`;
+
+  fetch(url)
+    .then((response) => response.json())
+    .then((data) => {
+      setN([
+        `Expected: ${data.length}`,
+        `Confirmed: ${
+          data.filter((val) => val.status === "registered").length
+        }`,
+      ]);
+    });
   return (
     <div className={styles.InfoContainer}>
       <h3 className="m-0">{event.name}</h3>
@@ -30,8 +46,8 @@ const InfoContainer = ({ event }) => {
       <div className={styles.SubInfoContainer}>
         <div className={styles.Icon}>{chartIcon}</div>
         <div className={styles.Info}>
-          <p># Expected attendees</p>
-          <p># Confirmed attendess</p>
+          <p>{n[0]}</p>
+          <p>{n[1]}</p>
         </div>
       </div>
     </div>
