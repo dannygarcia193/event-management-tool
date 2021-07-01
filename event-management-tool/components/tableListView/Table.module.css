@@ -38,6 +38,7 @@
   display: flex;
   overflow-x: auto;
   flex-wrap: wrap;
+  margin-bottom: 2rem;
 }
 .PageJumpControl {
   margin-left: auto;
@@ -56,6 +57,10 @@
 .Past {
   background-color: indigo;
 }
+.ScrollbarContainer::-webkit-scrollbar {
+  display: none;
+}
+
 @media screen and (max-width: 576px) {
   .PageJumpControl {
     width: 100%;

@@ -2,14 +2,47 @@ import React from "react";
 import { useTable, usePagination } from "react-table";
 import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
+import Fuse from "fuse.js";
 
-const THead = ({ headerGroups }) => {
+const SearchFilter = ({ setServerData, originalData }) => {
+  const options = {
+    includeScore: true,
+    keys: ["title"],
+    minMatchCharLength: 1,
+    threshold: 0.2,
+  };
+  const fuse = new Fuse(originalData, options);
+  return (
+    <input
+      style={{ display: "flex", margin: "auto" }}
+      placeholder={`Search for event...`}
+      onChange={(e) => {
+        e.target.value === "" ||
+        e.target.value === null ||
+        e.target.value === undefined
+          ? setServerData(originalData)
+          : setServerData(fuse.search(e.target.value).map((row) => row.item));
+      }}
+    />
+  );
+};
+const THead = ({ headerGroups, setServerData, originalData }) => {
   return (
     <thead>
       {headerGroups.map((headerGroup) => (
         <tr {...headerGroup.getHeaderGroupProps()}>
           {headerGroup.headers.map((column) => (
-            <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+            <th {...column.getHeaderProps()}>
+              {column.render("Header")}
+              {column.Header === "Name" ? (
+                <SearchFilter
+                  setServerData={setServerData}
+                  originalData={originalData}
+                />
+              ) : (
+                ""
+              )}
+            </th>
           ))}
         </tr>
       ))}
@@ -71,6 +104,8 @@ function Table({
   fetchData,
   serverData,
   pageCount: controlledPageCount,
+  originalData,
+  setServerData,
 }) {
   const {
     getTableProps,
@@ -105,7 +140,11 @@ function Table({
   return (
     <>
       <table className={styles.Table} {...getTableProps()}>
-        <THead headerGroups={headerGroups} />
+        <THead
+          headerGroups={headerGroups}
+          setServerData={setServerData}
+          originalData={originalData}
+        />
         <TBody
           page={page}
           controlledPageCount={controlledPageCount}
@@ -170,13 +209,16 @@ function Table({
 }
 
 function TableContainer({ serverData }) {
+  const [filteredData, setFilteredData] = React.useState(serverData);
   const columns = React.useMemo(() => table_columns, []);
   const [data, setData] = React.useState([]);
+  // const filteredData = JSON.parse(JSON.stringify(serverData));
   const [pageCount, setPageCount] = React.useState(20);
   const fetchIdRef = React.useRef(0);
 
   const fetchData = React.useCallback(({ pageSize, pageIndex, serverData }) => {
     const fetchId = ++fetchIdRef.current;
+
     if (fetchId === fetchIdRef.current) {
       const startRow = pageSize * pageIndex;
       const endRow = startRow + pageSize;
@@ -192,7 +234,9 @@ function TableContainer({ serverData }) {
         data={data}
         fetchData={fetchData}
         pageCount={pageCount}
-        serverData={serverData}
+        serverData={filteredData}
+        originalData={serverData}
+        setServerData={setFilteredData}
       />
     </div>
   );
