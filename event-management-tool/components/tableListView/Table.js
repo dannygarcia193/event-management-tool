@@ -4,7 +4,7 @@ import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
 import Fuse from "fuse.js";
 
-const SearchFilter = ({ setServerData, originalData }) => {
+const SearchFilter = ({ setServerData, originalData, firstPage }) => {
   const options = {
     includeScore: true,
     keys: ["title"],
@@ -22,11 +22,12 @@ const SearchFilter = ({ setServerData, originalData }) => {
         e.target.value === undefined
           ? setServerData(originalData)
           : setServerData(fuse.search(e.target.value).map((row) => row.item));
+        firstPage(0);
       }}
     />
   );
 };
-const THead = ({ headerGroups, setServerData, originalData }) => {
+const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
   return (
     <thead>
       {headerGroups.map((headerGroup) => (
@@ -38,6 +39,7 @@ const THead = ({ headerGroups, setServerData, originalData }) => {
                 <SearchFilter
                   setServerData={setServerData}
                   originalData={originalData}
+                  firstPage={firstPage}
                 />
               ) : (
                 ""
@@ -144,6 +146,7 @@ function Table({
           headerGroups={headerGroups}
           setServerData={setServerData}
           originalData={originalData}
+          firstPage={gotoPage}
         />
         <TBody
           page={page}
@@ -212,7 +215,6 @@ function TableContainer({ serverData }) {
   const [filteredData, setFilteredData] = React.useState(serverData);
   const columns = React.useMemo(() => table_columns, []);
   const [data, setData] = React.useState([]);
-  // const filteredData = JSON.parse(JSON.stringify(serverData));
   const [pageCount, setPageCount] = React.useState(20);
   const fetchIdRef = React.useRef(0);
 
