@@ -4,10 +4,10 @@ import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
 import Fuse from "fuse.js";
 
-const SearchFilter = ({ setServerData, originalData, firstPage }) => {
+const SearchFilter = ({ column, setServerData, originalData, firstPage }) => {
   const options = {
     includeScore: true,
-    keys: ["title"],
+    keys: [column],
     minMatchCharLength: 1,
     threshold: 0.2,
   };
@@ -27,6 +27,49 @@ const SearchFilter = ({ setServerData, originalData, firstPage }) => {
     />
   );
 };
+
+function SelectColumnFilter({
+  column,
+  setServerData,
+  originalData,
+  firstPage,
+}) {
+  const options = React.useMemo(() => {
+    const name = [...new Set(originalData.map((row) => row.state))];
+    return name;
+  }, [""]);
+
+  const fuseOptions = {
+    includeScore: true,
+    keys: [column],
+    minMatchCharLength: 1,
+    threshold: 0,
+  };
+  const fuse = new Fuse(originalData, fuseOptions);
+
+  return (
+    <select
+      onChange={(e) => {
+        e.target.value === "" ||
+        e.target.value === null ||
+        e.target.value === undefined
+          ? setServerData(originalData)
+          : setServerData(fuse.search(e.target.value).map((row) => row.item));
+        firstPage(0);
+      }}
+    >
+      <option value="">All</option>
+      {options.map((option, i) =>
+        option == undefined ? null : (
+          <option key={i} value={option}>
+            {option}
+          </option>
+        )
+      )}
+    </select>
+  );
+}
+
 const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
   return (
     <thead>
@@ -35,14 +78,23 @@ const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
           {headerGroup.headers.map((column) => (
             <th {...column.getHeaderProps()}>
               {column.render("Header")}
-              {column.Header === "Name" ? (
-                <SearchFilter
+              {console.log(column)}
+              {column.Header === "Status" ? (
+                ""
+              ) : column.Header === "State" ? (
+                <SelectColumnFilter
+                  column={column.id}
                   setServerData={setServerData}
                   originalData={originalData}
                   firstPage={firstPage}
                 />
               ) : (
-                ""
+                <SearchFilter
+                  column={column.id}
+                  setServerData={setServerData}
+                  originalData={originalData}
+                  firstPage={firstPage}
+                />
               )}
             </th>
           ))}
