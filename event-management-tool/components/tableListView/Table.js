@@ -2,7 +2,6 @@ import React from "react";
 import { useTable, usePagination } from "react-table";
 import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
-import Fuse from "fuse.js";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker/dist/entry.nostyle";
 import "react-calendar/dist/Calendar.css";
 import isWithinInterval from "date-fns/isWithinInterval";
@@ -36,25 +35,60 @@ const reducer = (originalData, setServerData, firstPage) => {
 const SearchFilter = ({ column, setServerData, originalData, firstPage }) => {
   const input = React.createRef();
   return (
-    <div style={{ display: "inline-flex" }}>
+    <div
+      className={styles.Search}
+      style={{ display: "inline-flex", width: "80%" }}
+    >
       <input
         id={column}
         defaultValue=""
         type="text"
-        style={{ display: "flex", margin: "auto" }}
+        style={{
+          display: "flex",
+          width: "90%",
+          minWidth: "90%",
+          borderTopRightRadius: "0",
+          borderBottomRightRadius: "0",
+          paddingTop: "0.1rem",
+          paddingBottom: "0.1rem",
+        }}
         placeholder={`Search for ${column} ...`}
         className="form-control"
         ref={input}
         onChange={(e) => reducer(originalData, setServerData, firstPage)}
       />
       <button
-        className="Btn BtnSecondary"
+        style={{
+          width: "10%",
+          minWidth: "10%",
+          display: "inline-flex",
+          justifyContent: "center",
+          alignContent: "center",
+          borderTopLeftRadius: "0",
+          borderBottomLeftRadius: "0",
+          border: "1px solid #ced4da",
+          borderLeftWidth: "0",
+          alignItems: "center",
+        }}
+        className="Btn BtnLink"
         onClick={() => {
           input.current.value = "";
           reducer(originalData, setServerData, firstPage);
         }}
       >
-        x
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="19"
+          height="19"
+          viewBox="0 0 19 19"
+          stroke="black"
+          stroke-width="2"
+          class="react-daterange-picker__clear-button__icon react-daterange-picker__button__icon"
+          style={{ position: "absolute" }}
+        >
+          <line x1="4" x2="15" y1="4" y2="15"></line>
+          <line x1="15" x2="4" y1="4" y2="15"></line>
+        </svg>
       </button>
     </div>
   );
