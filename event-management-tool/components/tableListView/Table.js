@@ -4,6 +4,18 @@ import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
 import Fuse from "fuse.js";
 
+import DateRangePicker from "@wojtekmaj/react-daterange-picker/dist/entry.nostyle";
+import "react-calendar/dist/Calendar.css";
+
+import isSameDay from "date-fns/isSameDay";
+import isWithinInterval from "date-fns/isWithinInterval";
+//import { format } from "date-fns";
+/*          setServerData(
+            originalData.filter((row) =>
+              isSameDay(new Date(e), new Date(row.start))
+            )
+          );
+          firstPage(0); */
 const SearchFilter = ({ column, setServerData, originalData, firstPage }) => {
   const options = {
     includeScore: true,
@@ -70,6 +82,60 @@ function SelectColumnFilter({
   );
 }
 
+const DateRangeFilter = ({
+  column,
+  setServerData,
+  originalData,
+  firstPage,
+}) => {
+  const [values, setValues] = React.useState([null, null]);
+  const [show, setShow] = React.useState(false);
+  const calendarCustomStyle = show
+    ? styles.OpenCalendar
+    : styles.ClosedCalendar;
+
+  return (
+    <div>
+      <button
+        aria-label="Calendar"
+        type="button"
+        className={styles.CalendarBtn}
+        onClick={() => setShow(!show)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="19"
+          height="19"
+          viewBox="0 0 19 19"
+          stroke="black"
+          strokeWidth="2"
+          className={styles.CalendarIcon}
+        >
+          <rect fill="none" height="15" width="15" x="2" y="2"></rect>
+          <line x1="6" x2="6" y1="0" y2="4"></line>
+          <line x1="13" x2="13" y1="0" y2="4"></line>
+        </svg>
+      </button>
+      <DateRangePicker
+        onChange={(e) => {
+          e == null ? setValues([null, null]) : setValues([e[0], e[1]]);
+          e == null
+            ? setServerData(originalData)
+            : setServerData(
+                originalData.filter((row) =>
+                  isWithinInterval(new Date(row.start), {
+                    start: e[0],
+                    end: e[1],
+                  })
+                )
+              );
+        }}
+        value={values}
+        className={styles.Calendar + " " + calendarCustomStyle}
+      />
+    </div>
+  );
+};
 const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
   return (
     <thead>
@@ -78,11 +144,17 @@ const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
           {headerGroup.headers.map((column) => (
             <th {...column.getHeaderProps()}>
               {column.render("Header")}
-              {console.log(column)}
               {column.Header === "Status" ? (
                 ""
               ) : column.Header === "State" ? (
                 <SelectColumnFilter
+                  column={column.id}
+                  setServerData={setServerData}
+                  originalData={originalData}
+                  firstPage={firstPage}
+                />
+              ) : column.Header === "Start" ? (
+                <DateRangeFilter
                   column={column.id}
                   setServerData={setServerData}
                   originalData={originalData}
