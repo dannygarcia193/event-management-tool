@@ -5,12 +5,12 @@ export const table_columns = [
     Header: "Start",
     accessor: "start",
   },
+  { Header: "City", accessor: "city" },
+  { Header: "State", accessor: "state" },
   {
     Header: "Status",
     accessor: "status",
   },
-  { Header: "City", accessor: "city" },
-  { Header: "State", accessor: "state" },
 ];
 const placeholder = "";
 export default placeholder;

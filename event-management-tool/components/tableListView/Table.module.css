@@ -60,25 +60,6 @@
 .ScrollbarContainer::-webkit-scrollbar {
   display: none;
 }
-.Calendar {
-  background-color: initial;
-}
-.CalendarBtn {
-  background-color: white;
-  border: 0.1rem solid var(--gray);
-  border-radius: 0.25rem;
-}
-.OpenCalendar {
-  display: block;
-  position: relative;
-}
-.ClosedCalendar {
-  display: none;
-}
-.CalendarIcon {
-  border: 0;
-  background: transparent;
-}
 
 @media screen and (max-width: 576px) {
   .PageJumpControl {

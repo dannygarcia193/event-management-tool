@@ -1,7 +1,3 @@
-.Dropdown {
-  display: inline-flex;
-  margin-left: auto;
-}
 .DropdownMenu {
   position: absolute;
   z-index: 1000;
@@ -72,10 +68,4 @@
 .FilterTitle {
   margin-left: 0.25rem;
   margin-right: 0.25rem;
-}
-
-@media screen and (min-width: 576px) {
-  .Dropdown {
-    margin-left: 1rem;
-  }
 }

@@ -3,72 +3,75 @@ import { useTable, usePagination } from "react-table";
 import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
 import Fuse from "fuse.js";
-
 import DateRangePicker from "@wojtekmaj/react-daterange-picker/dist/entry.nostyle";
 import "react-calendar/dist/Calendar.css";
-
-import isSameDay from "date-fns/isSameDay";
 import isWithinInterval from "date-fns/isWithinInterval";
-//import { format } from "date-fns";
-/*          setServerData(
-            originalData.filter((row) =>
-              isSameDay(new Date(e), new Date(row.start))
-            )
-          );
-          firstPage(0); */
+
+const reducer = (originalData, setServerData, firstPage) => {
+  const nameValue = document.getElementById("title").value;
+  const speakerValue = document.getElementById("speaker").value;
+  const cityValue = document.getElementById("city").value;
+  const stateValue = document.getElementById("state").value;
+
+  setServerData(
+    originalData.filter(
+      (row) =>
+        String(row.title)
+          .toLowerCase()
+          .includes(String(nameValue).toLowerCase()) &&
+        String(row.speaker)
+          .toLowerCase()
+          .includes(String(speakerValue).toLowerCase()) &&
+        String(row.city)
+          .toLowerCase()
+          .includes(String(cityValue).toLowerCase()) &&
+        String(row.state)
+          .toLowerCase()
+          .includes(String(stateValue).toLowerCase())
+    )
+  );
+  firstPage(0);
+};
+
 const SearchFilter = ({ column, setServerData, originalData, firstPage }) => {
-  const options = {
-    includeScore: true,
-    keys: [column],
-    minMatchCharLength: 1,
-    threshold: 0.2,
-  };
-  const fuse = new Fuse(originalData, options);
+  const input = React.createRef();
   return (
-    <input
-      style={{ display: "flex", margin: "auto" }}
-      placeholder={`Search for event...`}
-      onChange={(e) => {
-        e.target.value === "" ||
-        e.target.value === null ||
-        e.target.value === undefined
-          ? setServerData(originalData)
-          : setServerData(fuse.search(e.target.value).map((row) => row.item));
-        firstPage(0);
-      }}
-    />
+    <div style={{ display: "inline-flex" }}>
+      <input
+        id={column}
+        defaultValue=""
+        type="text"
+        style={{ display: "flex", margin: "auto" }}
+        placeholder={`Search for ${column} ...`}
+        className="form-control"
+        ref={input}
+        onChange={(e) => reducer(originalData, setServerData, firstPage)}
+      />
+      <button
+        className="Btn BtnSecondary"
+        onClick={() => {
+          input.current.value = "";
+          reducer(originalData, setServerData, firstPage);
+        }}
+      >
+        x
+      </button>
+    </div>
   );
 };
 
 function SelectColumnFilter({
-  column,
   setServerData,
   originalData,
+  filteredData,
   firstPage,
 }) {
-  const options = React.useMemo(() => {
-    const name = [...new Set(originalData.map((row) => row.state))];
-    return name;
-  }, [""]);
-
-  const fuseOptions = {
-    includeScore: true,
-    keys: [column],
-    minMatchCharLength: 1,
-    threshold: 0,
-  };
-  const fuse = new Fuse(originalData, fuseOptions);
+  const options = [...new Set(filteredData.map((row) => row.state))];
 
   return (
     <select
-      onChange={(e) => {
-        e.target.value === "" ||
-        e.target.value === null ||
-        e.target.value === undefined
-          ? setServerData(originalData)
-          : setServerData(fuse.search(e.target.value).map((row) => row.item));
-        firstPage(0);
-      }}
+      id="state"
+      onChange={(e) => reducer(originalData, setServerData, firstPage)}
     >
       <option value="">All</option>
       {options.map((option, i) =>
@@ -83,67 +86,56 @@ function SelectColumnFilter({
 }
 
 const DateRangeFilter = ({
-  column,
   setServerData,
+  filteredData,
   originalData,
   firstPage,
 }) => {
   const [values, setValues] = React.useState([null, null]);
-  const [show, setShow] = React.useState(false);
-  const calendarCustomStyle = show
-    ? styles.OpenCalendar
-    : styles.ClosedCalendar;
 
   return (
-    <div>
-      <button
-        aria-label="Calendar"
-        type="button"
-        className={styles.CalendarBtn}
-        onClick={() => setShow(!show)}
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="19"
-          height="19"
-          viewBox="0 0 19 19"
-          stroke="black"
-          strokeWidth="2"
-          className={styles.CalendarIcon}
-        >
-          <rect fill="none" height="15" width="15" x="2" y="2"></rect>
-          <line x1="6" x2="6" y1="0" y2="4"></line>
-          <line x1="13" x2="13" y1="0" y2="4"></line>
-        </svg>
-      </button>
-      <DateRangePicker
-        onChange={(e) => {
-          e == null ? setValues([null, null]) : setValues([e[0], e[1]]);
-          e == null
-            ? setServerData(originalData)
-            : setServerData(
-                originalData.filter((row) =>
-                  isWithinInterval(new Date(row.start), {
-                    start: e[0],
-                    end: e[1],
-                  })
-                )
-              );
-        }}
-        value={values}
-        className={styles.Calendar + " " + calendarCustomStyle}
-      />
-    </div>
+    <DateRangePicker
+      onChange={(e) => {
+        e == null ? setValues([null, null]) : setValues([e[0], e[1]]);
+        e == null
+          ? setServerData(originalData)
+          : setServerData(
+              filteredData.filter((row) =>
+                isWithinInterval(new Date(row.start), {
+                  start: e[0],
+                  end: e[1],
+                })
+              )
+            );
+        firstPage(0);
+      }}
+      value={values}
+      className={styles.Calendar}
+    />
   );
 };
-const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
+
+const THead = ({
+  headerGroups,
+  setServerData,
+  originalData,
+  filteredData,
+  firstPage,
+}) => {
   return (
     <thead>
       {headerGroups.map((headerGroup) => (
         <tr {...headerGroup.getHeaderGroupProps()}>
           {headerGroup.headers.map((column) => (
+            <th {...column.getHeaderProps()}>{column.render("Header")}</th>
+          ))}
+        </tr>
+      ))}
+      {headerGroups.map((headerGroup) => (
+        <tr {...headerGroup.getHeaderGroupProps()}>
+          {headerGroup.headers.map((column) => (
             <th {...column.getHeaderProps()}>
-              {column.render("Header")}
+              {" "}
               {column.Header === "Status" ? (
                 ""
               ) : column.Header === "State" ? (
@@ -151,12 +143,13 @@ const THead = ({ headerGroups, setServerData, originalData, firstPage }) => {
                   column={column.id}
                   setServerData={setServerData}
                   originalData={originalData}
+                  filteredData={filteredData}
                   firstPage={firstPage}
                 />
               ) : column.Header === "Start" ? (
                 <DateRangeFilter
-                  column={column.id}
                   setServerData={setServerData}
+                  filteredData={filteredData}
                   originalData={originalData}
                   firstPage={firstPage}
                 />
@@ -228,9 +221,9 @@ function Table({
   columns,
   data,
   fetchData,
-  serverData,
   pageCount: controlledPageCount,
   originalData,
+  filteredData,
   setServerData,
 }) {
   const {
@@ -260,8 +253,8 @@ function Table({
   );
 
   React.useEffect(() => {
-    fetchData({ pageIndex, pageSize, serverData });
-  }, [fetchData, pageIndex, pageSize, serverData]);
+    fetchData({ pageIndex, pageSize, filteredData });
+  }, [fetchData, pageIndex, pageSize, filteredData]);
 
   return (
     <>
@@ -270,6 +263,7 @@ function Table({
           headerGroups={headerGroups}
           setServerData={setServerData}
           originalData={originalData}
+          filteredData={filteredData}
           firstPage={gotoPage}
         />
         <TBody
@@ -336,22 +330,26 @@ function Table({
 }
 
 function TableContainer({ serverData }) {
+  const originalData = serverData;
   const [filteredData, setFilteredData] = React.useState(serverData);
   const columns = React.useMemo(() => table_columns, []);
   const [data, setData] = React.useState([]);
   const [pageCount, setPageCount] = React.useState(20);
   const fetchIdRef = React.useRef(0);
 
-  const fetchData = React.useCallback(({ pageSize, pageIndex, serverData }) => {
-    const fetchId = ++fetchIdRef.current;
+  const fetchData = React.useCallback(
+    ({ pageSize, pageIndex, filteredData }) => {
+      const fetchId = ++fetchIdRef.current;
 
-    if (fetchId === fetchIdRef.current) {
-      const startRow = pageSize * pageIndex;
-      const endRow = startRow + pageSize;
-      setData(serverData.slice(startRow, endRow));
-      setPageCount(Math.ceil(serverData.length / pageSize));
-    }
-  }, []);
+      if (fetchId === fetchIdRef.current) {
+        const startRow = pageSize * pageIndex;
+        const endRow = startRow + pageSize;
+        setData(filteredData.slice(startRow, endRow));
+        setPageCount(Math.ceil(filteredData.length / pageSize));
+      }
+    },
+    []
+  );
 
   return (
     <div className={styles.TableResponsive}>
@@ -360,8 +358,8 @@ function TableContainer({ serverData }) {
         data={data}
         fetchData={fetchData}
         pageCount={pageCount}
-        serverData={filteredData}
-        originalData={serverData}
+        originalData={originalData}
+        filteredData={filteredData}
         setServerData={setFilteredData}
       />
     </div>
