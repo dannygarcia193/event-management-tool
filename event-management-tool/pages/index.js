@@ -12,7 +12,6 @@ const eventStatus = {
 
 const fetchEvents = ({ addEvents, eventsFailed, eventType }) => {
   const status = eventStatus[eventType];
-  console.log(status);
   const url =
     eventType === 3
       ? "http://localhost:3001/events"

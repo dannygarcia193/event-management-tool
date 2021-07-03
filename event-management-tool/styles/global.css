@@ -466,7 +466,7 @@ i.bi-clock-fill {
   flex-grow: 1;
   flex-shrink: 0;
   align-items: center;
-  border: thin solid gray;
+  border: thin solid #ced4da;
 }
 .react-daterange-picker__inputGroup {
   min-width: calc((4px * 3) + 0.54em * 8 + 0.217em * 2);
@@ -474,10 +474,15 @@ i.bi-clock-fill {
   flex-grow: 1;
   padding: 0 2px;
   box-sizing: content-box;
+  display: none;
+}
+.react-daterange-picker__range-divider {
+  display: none;
 }
 .react-daterange-picker__inputGroup__divider {
   padding: 1px 0;
   white-space: pre;
+  display: none;
 }
 .react-daterange-picker__inputGroup__input {
   min-width: 0.54em;

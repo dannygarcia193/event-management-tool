@@ -4,13 +4,28 @@ import { table_columns } from "./tableColumns.js";
 import styles from "./Table.module.css";
 import DateRangePicker from "@wojtekmaj/react-daterange-picker/dist/entry.nostyle";
 import "react-calendar/dist/Calendar.css";
-import isWithinInterval from "date-fns/isWithinInterval";
 
-const reducer = (originalData, setServerData, firstPage) => {
+const reducer = (originalData, setServerData, firstPage, added = null) => {
   const nameValue = document.getElementById("title").value;
   const speakerValue = document.getElementById("speaker").value;
   const cityValue = document.getElementById("city").value;
   const stateValue = document.getElementById("state").value;
+  const dateValue = document.getElementsByClassName(
+    "react-daterange-picker__inputGroup"
+  );
+  const startValue =
+    dateValue[0].firstChild.value === ""
+      ? dateValue[0].firstChild.min
+      : dateValue[0].firstChild.value.split("-").map((val) => Number(val));
+  const endValue =
+    dateValue[1].firstChild.value === ""
+      ? dateValue[1].firstChild.max
+      : dateValue[1].firstChild.value.split("-").map((val) => Number(val));
+
+  const dateInterval = [
+    added !== null ? new Date(added[0]) : new Date(startValue),
+    added !== null ? new Date(added[1]) : new Date(endValue),
+  ];
 
   setServerData(
     originalData.filter(
@@ -26,7 +41,11 @@ const reducer = (originalData, setServerData, firstPage) => {
           .includes(String(cityValue).toLowerCase()) &&
         String(row.state)
           .toLowerCase()
-          .includes(String(stateValue).toLowerCase())
+          .includes(String(stateValue).toLowerCase()) &&
+        dateInterval[0].setHours(0, 0, 0, 0) <=
+          new Date(row.start).setHours(0, 0, 0, 0) &&
+        new Date(row.start).setHours(0, 0, 0, 0) <=
+          dateInterval[1].setHours(0, 0, 0, 0)
     )
   );
   firstPage(0);
@@ -82,8 +101,8 @@ const SearchFilter = ({ column, setServerData, originalData, firstPage }) => {
           height="19"
           viewBox="0 0 19 19"
           stroke="black"
-          stroke-width="2"
-          class="react-daterange-picker__clear-button__icon react-daterange-picker__button__icon"
+          strokeWidth="2"
+          className="react-daterange-picker__clear-button__icon react-daterange-picker__button__icon"
           style={{ position: "absolute" }}
         >
           <line x1="4" x2="15" y1="4" y2="15"></line>
@@ -97,14 +116,15 @@ const SearchFilter = ({ column, setServerData, originalData, firstPage }) => {
 function SelectColumnFilter({
   setServerData,
   originalData,
-  filteredData,
   firstPage,
+  filteredData,
 }) {
   const options = [...new Set(filteredData.map((row) => row.state))];
 
   return (
     <select
       id="state"
+      style={{ border: "1px solid #ced4da", background: "white" }}
       onChange={(e) => reducer(originalData, setServerData, firstPage)}
     >
       <option value="">All</option>
@@ -119,29 +139,23 @@ function SelectColumnFilter({
   );
 }
 
-const DateRangeFilter = ({
-  setServerData,
-  filteredData,
-  originalData,
-  firstPage,
-}) => {
+const DateRangeFilter = ({ setServerData, originalData, firstPage }) => {
   const [values, setValues] = React.useState([null, null]);
 
   return (
     <DateRangePicker
       onChange={(e) => {
-        e == null ? setValues([null, null]) : setValues([e[0], e[1]]);
-        e == null
-          ? setServerData(originalData)
-          : setServerData(
-              filteredData.filter((row) =>
-                isWithinInterval(new Date(row.start), {
-                  start: e[0],
-                  end: e[1],
-                })
-              )
-            );
-        firstPage(0);
+        async function toggle() {
+          const added = e != null ? [e[0], e[1]] : null;
+          await Promise.resolve(
+            e == null ? setValues([null, null]) : setValues([e[0], e[1]])
+          );
+
+          added === null
+            ? reducer(originalData, setServerData, firstPage)
+            : reducer(originalData, setServerData, firstPage, added);
+        }
+        toggle();
       }}
       value={values}
       className={styles.Calendar}
@@ -153,8 +167,8 @@ const THead = ({
   headerGroups,
   setServerData,
   originalData,
-  filteredData,
   firstPage,
+  filteredData,
 }) => {
   return (
     <thead>
@@ -168,7 +182,10 @@ const THead = ({
       {headerGroups.map((headerGroup) => (
         <tr {...headerGroup.getHeaderGroupProps()}>
           {headerGroup.headers.map((column) => (
-            <th {...column.getHeaderProps()}>
+            <th
+              {...column.getHeaderProps()}
+              style={{ padding: "0", paddingBottom: "0.5rem" }}
+            >
               {" "}
               {column.Header === "Status" ? (
                 ""
@@ -177,13 +194,12 @@ const THead = ({
                   column={column.id}
                   setServerData={setServerData}
                   originalData={originalData}
-                  filteredData={filteredData}
                   firstPage={firstPage}
+                  filteredData={filteredData}
                 />
               ) : column.Header === "Start" ? (
                 <DateRangeFilter
                   setServerData={setServerData}
-                  filteredData={filteredData}
                   originalData={originalData}
                   firstPage={firstPage}
                 />
@@ -297,8 +313,8 @@ function Table({
           headerGroups={headerGroups}
           setServerData={setServerData}
           originalData={originalData}
-          filteredData={filteredData}
           firstPage={gotoPage}
+          filteredData={filteredData}
         />
         <TBody
           page={page}
